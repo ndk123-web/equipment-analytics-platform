@@ -74,7 +74,7 @@ def uploadDesktopFile(request):
     if total_records == 0:
         return Response({"error": "CSV file is empty"}, status=400)
     
-    avg_flowRate = df["FlowRate"].mean()
+    avg_flowRate = df["Flowrate"].mean()
     avg_pressure = df["Pressure"].mean()
     avg_temperature = df["Temperature"].mean()
     

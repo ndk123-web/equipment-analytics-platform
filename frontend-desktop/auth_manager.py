@@ -94,7 +94,17 @@ class AuthManager:
     
     def request_with_retry(self, method: str, url: str, **kwargs) -> requests.Response:
         """Make a request with automatic token refresh on 401."""
-        kwargs.setdefault('headers', {}).update(self.get_headers())
+        # Don't set Content-Type header if files are being uploaded
+        # requests will automatically set multipart/form-data
+        if 'files' not in kwargs:
+            kwargs.setdefault('headers', {}).update(self.get_headers())
+        else:
+            # For file uploads, only add Authorization header, not Content-Type
+            headers = kwargs.get('headers', {})
+            if self.access_token:
+                headers['Authorization'] = f'Bearer {self.access_token}'
+            kwargs['headers'] = headers
+        
         kwargs.setdefault('timeout', API_TIMEOUT)
         
         response = requests.request(method, url, **kwargs)
@@ -103,7 +113,13 @@ class AuthManager:
         if response.status_code == 401 and self.refresh_token:
             if self.refresh_access_token():
                 # Retry the request with new token
-                kwargs['headers'] = self.get_headers()
+                if 'files' in kwargs:
+                    headers = kwargs.get('headers', {})
+                    if self.access_token:
+                        headers['Authorization'] = f'Bearer {self.access_token}'
+                    kwargs['headers'] = headers
+                else:
+                    kwargs['headers'] = self.get_headers()
                 response = requests.request(method, url, **kwargs)
         
         return response

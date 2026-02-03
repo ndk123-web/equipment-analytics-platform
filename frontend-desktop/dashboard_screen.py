@@ -9,6 +9,7 @@ from PyQt5.QtCore import Qt, pyqtSignal, QThread
 from PyQt5.QtGui import QFont
 from api_client import APIClient
 from auth_manager import auth_manager
+from analytics_screen import AnalyticsScreen
 
 
 class UploadWorker:
@@ -78,6 +79,11 @@ class DashboardScreen(QWidget):
         # History tab
         history_widget = self.create_history_tab()
         tab_widget.addTab(history_widget, "Upload History")
+        
+        # Analytics tab
+        self.analytics_screen = AnalyticsScreen()
+        self.analytics_screen.back_requested.connect(lambda: tab_widget.setCurrentIndex(1))
+        tab_widget.addTab(self.analytics_screen, "📊 Analytics")
         
         layout.addWidget(tab_widget)
         
@@ -290,6 +296,9 @@ class DashboardScreen(QWidget):
             # Refresh history
             self.current_page = 0
             self.load_history()
+            
+            # Refresh analytics
+            self.analytics_screen.load_analytics_data()
             
             # Reset file selection
             self.file_path_label.setText("No file selected")

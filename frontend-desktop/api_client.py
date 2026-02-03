@@ -83,12 +83,11 @@ class APIClient:
         """
         try:
             with open(file_path, 'rb') as f:
-                files = {'file': f}
+                files = {'file': (file_path, f, 'text/csv')}
                 response = auth_manager.request_with_retry(
                     'POST',
                     f"{API_BASE_URL}/desktop/upload",
-                    files=files,
-                    headers={'Authorization': f'Bearer {auth_manager.access_token}'}
+                    files=files
                 )
             response.raise_for_status()
             return response.json()
