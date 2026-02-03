@@ -70,7 +70,7 @@ export const authAPI = {
   },
 
   signup: async (data: SignupRequest): Promise<AuthResponse> => {
-    const response = await api.post('/app1/token/', data);
+    const response = await api.post('/signup/', data);
     return response.data;
   },
 
