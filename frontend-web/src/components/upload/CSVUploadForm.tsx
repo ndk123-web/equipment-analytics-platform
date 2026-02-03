@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { uploadAPI } from '../../services/api';
+import type { UploadResponse } from '../../types/upload';
 
 interface CSVUploadFormProps {
-  onUploadSuccess?: (filename: string) => void;
+  onUploadSuccess?: (uploadData: UploadResponse) => void;
 }
 
 export const CSVUploadForm: React.FC<CSVUploadFormProps> = ({ onUploadSuccess }) => {
@@ -48,7 +49,7 @@ export const CSVUploadForm: React.FC<CSVUploadFormProps> = ({ onUploadSuccess })
     setUploadError(null);
 
     try {
-      await uploadAPI.uploadCSV(selectedFile);
+      const uploadData = await uploadAPI.uploadCSV(selectedFile);
       
       setUploadSuccess(`Successfully uploaded: ${selectedFile.name}`);
       setSelectedFile(null);
@@ -58,7 +59,7 @@ export const CSVUploadForm: React.FC<CSVUploadFormProps> = ({ onUploadSuccess })
       if (fileInput) fileInput.value = '';
 
       if (onUploadSuccess) {
-        onUploadSuccess(selectedFile.name);
+        onUploadSuccess(uploadData);
       }
 
       // Clear success message after 3 seconds

@@ -3,68 +3,74 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { CSVUploadForm } from '../components/upload/CSVUploadForm';
 import { UploadHistoryList } from '../components/upload/UploadHistoryList';
-import type { UploadHistory } from '../types/upload';
+import type { UploadResponse } from '../types/upload';
 
 // Mock upload history data
-const MOCK_UPLOADS: UploadHistory[] = [
+const MOCK_UPLOADS: UploadResponse[] = [
   {
-    id: '1',
-    filename: 'sales_data_2024.csv',
-    uploadedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-    size: 2048,
-    status: 'success',
+    id: 1,
+    name: 'sales_data_2024.csv',
+    uploaded_by: 'admin',
+    uploaded_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    total_rows: 150,
+    avg_usage_hours: 45.5,
+    avg_power: 2850.75,
+    equipment_distribution: { 'Motor A': 30, 'Motor B': 25, 'Generator': 40, 'Compressor': 20, 'Pump': 35 },
   },
   {
-    id: '2',
-    filename: 'customer_list.csv',
-    uploadedAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-    size: 4096,
-    status: 'success',
+    id: 2,
+    name: 'customer_list.csv',
+    uploaded_by: 'admin',
+    uploaded_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+    total_rows: 200,
+    avg_usage_hours: 52.3,
+    avg_power: 3120.45,
+    equipment_distribution: { 'Motor A': 45, 'Motor B': 35, 'Generator': 50 },
   },
   {
-    id: '3',
-    filename: 'Q1_report.csv',
-    uploadedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-    size: 1536,
-    status: 'success',
+    id: 3,
+    name: 'Q1_report.csv',
+    uploaded_by: 'user',
+    uploaded_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    total_rows: 300,
+    avg_usage_hours: 38.7,
+    avg_power: 2650.25,
+    equipment_distribution: { 'Motor A': 60, 'Motor B': 50, 'Compressor': 40 },
   },
   {
-    id: '4',
-    filename: 'inventory_backup.csv',
-    uploadedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-    size: 5120,
-    status: 'success',
+    id: 4,
+    name: 'inventory_backup.csv',
+    uploaded_by: 'admin',
+    uploaded_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    total_rows: 250,
+    avg_usage_hours: 48.9,
+    avg_power: 2900.60,
+    equipment_distribution: { 'Motor A': 55, 'Motor B': 40, 'Generator': 35, 'Pump': 25 },
   },
   {
-    id: '5',
-    filename: 'user_accounts.csv',
-    uploadedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-    size: 3072,
-    status: 'success',
+    id: 5,
+    name: 'user_accounts.csv',
+    uploaded_by: 'user',
+    uploaded_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    total_rows: 180,
+    avg_usage_hours: 42.1,
+    avg_power: 3000.80,
+    equipment_distribution: { 'Motor A': 50, 'Motor B': 30, 'Generator': 45, 'Compressor': 35, 'Pump': 40 },
   },
 ];
 
 export const UploadPage = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
-  const [uploadHistory, setUploadHistory] = useState<UploadHistory[]>(MOCK_UPLOADS);
+  const [uploadHistory, setUploadHistory] = useState<UploadResponse[]>(MOCK_UPLOADS);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
-  const handleUploadSuccess = useCallback((filename: string) => {
-    // Add new upload to history
-    const newUpload: UploadHistory = {
-      id: Date.now().toString(),
-      filename,
-      uploadedAt: new Date().toISOString(),
-      size: Math.floor(Math.random() * 5000) + 512, // Mock size
-      status: 'success',
-    };
-
-    setUploadHistory((prev) => [newUpload, ...prev]);
+  const handleUploadSuccess = useCallback((uploadData: UploadResponse) => {
+    setUploadHistory((prev) => [uploadData, ...prev]);
   }, []);
 
   return (
@@ -99,7 +105,7 @@ export const UploadPage = () => {
 
           {/* History Section - Spans 2 columns on desktop */}
           <div className="lg:col-span-2">
-            <UploadHistoryList uploads={uploadHistory} />
+            <UploadHistoryList uploads={uploadHistory} isLoading={false} />
           </div>
         </div>
 

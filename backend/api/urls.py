@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import testHome , signUp
+from .views import testHome , signUp, historyList
 from .upload_views import uploadWebFile, uploadDesktopFile
 
 urlpatterns = [
@@ -7,4 +7,5 @@ urlpatterns = [
     path('web/upload', uploadWebFile), # POST 
     path('desktop/upload', uploadDesktopFile), # POST
     path("signup/", signUp),
+    path("get-history/", historyList),
 ]

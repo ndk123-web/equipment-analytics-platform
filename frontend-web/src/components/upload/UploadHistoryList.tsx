@@ -1,14 +1,16 @@
 import { useMemo } from 'react';
-import type { UploadHistory } from '../../types/upload';
+import type { UploadResponse } from '../../types/upload';
 
 interface UploadHistoryListProps {
-  uploads: UploadHistory[];
+  uploads: UploadResponse[];
   isLoading?: boolean;
+  totalCount?: number;
 }
 
 export const UploadHistoryList: React.FC<UploadHistoryListProps> = ({
   uploads,
   isLoading = false,
+  totalCount = 0,
 }) => {
   // Get last 5 uploads
   const recentUploads = useMemo(() => {
@@ -20,7 +22,8 @@ export const UploadHistoryList: React.FC<UploadHistoryListProps> = ({
       <div className="bg-white rounded-xl shadow-md p-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">📋 Upload History</h2>
         <div className="text-center py-8">
-          <p className="text-gray-500">Loading...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-4 border-blue-200 border-t-blue-600 mx-auto"></div>
+          <p className="text-gray-500 mt-4">Loading...</p>
         </div>
       </div>
     );
@@ -40,9 +43,11 @@ export const UploadHistoryList: React.FC<UploadHistoryListProps> = ({
             <thead>
               <tr className="border-b border-gray-200">
                 <th className="text-left py-3 px-4 font-semibold text-gray-700">Filename</th>
-                <th className="text-left py-3 px-4 font-semibold text-gray-700">Size</th>
-                <th className="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-700">Rows</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-700">Uploaded By</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-700">Date</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-700">Avg Power</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-700">Avg Hours</th>
               </tr>
             </thead>
             <tbody>
@@ -51,30 +56,13 @@ export const UploadHistoryList: React.FC<UploadHistoryListProps> = ({
                   <td className="py-3 px-4 text-gray-900 font-medium">
                     <span className="flex items-center gap-2">
                       <span className="text-lg">📄</span>
-                      {upload.filename}
+                      {upload.name}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-gray-600">
-                    {(upload.size / 1024).toFixed(2)} KB
-                  </td>
-                  <td className="py-3 px-4">
-                    <span
-                      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${
-                        upload.status === 'success'
-                          ? 'bg-green-100 text-green-700'
-                          : upload.status === 'pending'
-                          ? 'bg-yellow-100 text-yellow-700'
-                          : 'bg-red-100 text-red-700'
-                      }`}
-                    >
-                      {upload.status === 'success' && '✅'}
-                      {upload.status === 'pending' && '⏳'}
-                      {upload.status === 'failed' && '❌'}
-                      {upload.status.charAt(0).toUpperCase() + upload.status.slice(1)}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-gray-600">
-                    {new Date(upload.uploadedAt).toLocaleDateString('en-US', {
+                  <td className="py-3 px-4 text-gray-600">{upload.total_rows}</td>
+                  <td className="py-3 px-4 text-gray-600">{upload.uploaded_by}</td>
+                  <td className="py-3 px-4 text-gray-600 text-xs">
+                    {new Date(upload.uploaded_at).toLocaleDateString('en-US', {
                       year: 'numeric',
                       month: 'short',
                       day: 'numeric',
@@ -82,6 +70,8 @@ export const UploadHistoryList: React.FC<UploadHistoryListProps> = ({
                       minute: '2-digit',
                     })}
                   </td>
+                  <td className="py-3 px-4 text-gray-700">{upload.avg_power.toFixed(2)}</td>
+                  <td className="py-3 px-4 text-gray-700">{upload.avg_usage_hours.toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
@@ -89,9 +79,14 @@ export const UploadHistoryList: React.FC<UploadHistoryListProps> = ({
         </div>
       )}
 
-      {uploads.length > 5 && (
+      {totalCount > uploads.length && (
         <div className="mt-4 text-sm text-gray-500 text-center">
-          Showing last 5 uploads out of {uploads.length} total
+          Showing {uploads.length} out of {totalCount} uploads
+        </div>
+      )}
+      {totalCount === 0 && uploads.length === 0 && (
+        <div className="mt-4 text-sm text-gray-500 text-center">
+          No uploads available
         </div>
       )}
     </div>

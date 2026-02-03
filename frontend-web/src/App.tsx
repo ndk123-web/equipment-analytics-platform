@@ -1,8 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
-import { DashboardPage } from './pages/DashboardPage';
-import { UploadPage } from './pages/UploadPage';
+import { UploadDashboard } from './pages/UploadDashboard';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { useAuthStore } from './store/authStore';
 import './App.css';
@@ -16,11 +15,11 @@ function App() {
         {/* Public Routes */}
         <Route
           path="/login"
-          element={isAuthenticated ? <Navigate to="/upload" replace /> : <LoginPage />}
+          element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />}
         />
         <Route
           path="/signup"
-          element={isAuthenticated ? <Navigate to="/upload" replace /> : <SignupPage />}
+          element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignupPage />}
         />
 
         {/* Protected Routes */}
@@ -28,24 +27,15 @@ function App() {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <DashboardPage />
+              <UploadDashboard />
             </ProtectedRoute>
           }
         />
 
-        <Route
-          path="/upload"
-          element={
-            <ProtectedRoute>
-              <UploadPage />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Redirect root to upload or login */}
+        {/* Redirect root to dashboard or login */}
         <Route
           path="/"
-          element={<Navigate to={isAuthenticated ? '/upload' : '/login'} replace />}
+          element={<Navigate to={isAuthenticated ? '/dashboard' : '/login'} replace />}
         />
 
         {/* 404 Fallback */}

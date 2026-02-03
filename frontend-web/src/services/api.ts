@@ -156,8 +156,16 @@ export const uploadAPI = {
         'Content-Type': 'multipart/form-data',
       },
     });
+
+    console.log("Upload API response:", response.data);
     return response.data;
   },
 };
+
+export const fetchHistoryAPI = async (limit: number, offset: number) => {
+  const response = await api.get(`/get-history?limit=${limit}&offset=${offset}`);
+  console.log("Fetch History API response:", response.data);
+  return response.data;
+}
 
 export default api;
