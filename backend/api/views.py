@@ -70,22 +70,25 @@ def historyList(request):
     except Exception as e:  
         return Response({"error": "Invalid query parameters."}, status=400)
     
-    # fetch datasets for the user with pagination and returns queryset ordered by uploaded_at descending
+    # Lazy queryset (means it doesn't hit the database until evaluated)
+    # serialize the paginated queryset (DB doesnt get hit here)
     qs = (Dataset.objects.filter(uploaded_by=user).order_by("-uploaded_at"))
     
     # apply pagination 
+    # serialize the paginated queryset (DB doesnt get hit here)
     pagination_qs = qs[offset:offset+limit]
     
-    # serialize the paginated queryset
+    # serialize the paginated queryset (DB doesnt get hit here)
     serializer = DatasetSerializer(pagination_qs, many=True)
     
-    print("Serialized data:", serializer.data)
+    # 
+    print("Serialized data:", serializer.data) 
     
     # return response with count, limit, offset and serialized results
     return Response({
         "count": qs.count(),
         "limit": limit,
         "offset": offset,
-        "results": serializer.data,
+        "results": serializer.data, # here actually db is hit to fetch the data
     })
     

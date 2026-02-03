@@ -51,6 +51,8 @@ def uploadWebFile(request):
     return Response(serializer.data, status=201)
 
 
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def uploadDesktopFile(request):
     # Handle file upload logic here
     file = request.FILES.get('file')
