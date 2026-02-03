@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { UploadPage } from './pages/UploadPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { useAuthStore } from './store/authStore';
 import './App.css';
@@ -15,11 +16,11 @@ function App() {
         {/* Public Routes */}
         <Route
           path="/login"
-          element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />}
+          element={isAuthenticated ? <Navigate to="/upload" replace /> : <LoginPage />}
         />
         <Route
           path="/signup"
-          element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignupPage />}
+          element={isAuthenticated ? <Navigate to="/upload" replace /> : <SignupPage />}
         />
 
         {/* Protected Routes */}
@@ -32,10 +33,19 @@ function App() {
           }
         />
 
-        {/* Redirect root to login or dashboard */}
+        <Route
+          path="/upload"
+          element={
+            <ProtectedRoute>
+              <UploadPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Redirect root to upload or login */}
         <Route
           path="/"
-          element={<Navigate to={isAuthenticated ? '/dashboard' : '/login'} replace />}
+          element={<Navigate to={isAuthenticated ? '/upload' : '/login'} replace />}
         />
 
         {/* 404 Fallback */}
